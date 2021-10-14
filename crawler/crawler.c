@@ -11,7 +11,7 @@
 #include "pagedir.h"
 
 /* global variables */
-static const int min = 10;
+static const int min = 0;
 static const int max = 10;
 static const int slots = 200;
 static void parseArgs(const int argc, char* argv[], char** seedURL, char** pagedirectory, int* maxDepth);
@@ -45,8 +45,11 @@ static void parseArgs(const int argc, char* argv[], char** seedURL, char** paged
     fprintf(stderr, "%s is not an internal URL", &fixedURL);
     exit(3);
   }
-  //check to see if directory is readable?
-  pagedir_init(*pageDirectory);
+
+  if (pagedir_init(*pageDirectory) == false) {
+    fprintf(stderr, "error with page directory");
+    exit(4);
+
   if (*maxDepth < min || *maxDepth > max) {
     fprintf(stderr, "maxDepth must be in the range [0, 10]");
 }
@@ -54,20 +57,20 @@ static void parseArgs(const int argc, char* argv[], char** seedURL, char** paged
 static void crawl(char* seedURL, char* pageDirectory, const int maxDepth) 
 {
   hashtable_t* hashtable = hashtable_new(slots);
-  hashtable_insert(hashtable, *seedURL, "");
-  bag_t* bag = bag_new(void); //void?
-  webpage_t* webpage = webpage_new(*seedURL, min, NULL); //pointers?
-  bag_insert(bag, webpage); //is this acceptable?
-  while ((webpage_t* extracted = bag_extract(bag)) != NULL) { //webpage_t*?
+  hashtable_insert(hashtable, seedURL, "");
+  bag_t* bag = bag_new(void);
+  webpage_t* webpage = webpage_new(seedURL, min, NULL);
+  bag_insert(bag, webpage);
+  while ((webpage_t* extracted = bag_extract(bag)) != NULL) {
     if (webpage_fetch(extracted)) {
       pagedir_save(extracted);
-      if (webpage_getDepth(extracted) < *maxDepth) { //pointer??
-        pageScan(extracted->html); //arrow??
+      if (webpage_getDepth(extracted) < maxDepth) {
+        pageScan(extracted, bag, hashtable);
       }
     }
     webpage_delete(extracted);
   }
-  hashtable_delete(hashtable, void (*itemdelete)(void* item)); //this does not seem right
+  hashtable_delete(hashtable, void (*itemdelete)(void* item));
   bag_delete(bag, void (*itemdelete)(void* item));
 
 //don;t forget about mem_assert and mem_malloc_assert
@@ -77,14 +80,14 @@ static void pageScan(webpage_t* page, bag_t* pagesToCrawl, hashtable_t* pagesSee
 {
   int pos = 0;
   while ((char* nextURL = webpage_getNextURL(page, &pos)) != NULL) {
-    if (isInternalURL(*nextURL)) {
-      if ((hashtable_insert(pagesSeen, *nextURL, "") != false)) { //pointer @pagesSeen?
-        int currDepth = webpage_getDepth(*nextURL);
-        webpage_t* webpage = webpage_new(*nextURL, &currDepth, NULL);
-        bag_insert(pagesToCrawl, webpage);
+    if (isInternalURL(nextURL)) {
+      if ((hashtable_insert(pagesSeen, nextURL, "") != false)) {
+        int currDepth = webpage_getDepth(nextURL);
+        webpage_t* webpage = webpage_new(nextURL, &currDepth, NULL);
+        bag_insert(*pagesToCrawl, webpage);
       }
     }
-    free(*nextURL);
+    free(nextURL);
   }
 }
 
