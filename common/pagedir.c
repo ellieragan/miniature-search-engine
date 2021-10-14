@@ -4,15 +4,27 @@
  * Oct 13 2021
  */
 
+#include <stdio.h>
+#include <stdlib.h>
+#include "../libcs50/webpage.h"
+#include "pagedir.h"
+
+
 /******** pagedir_init ********/
 /* see pagedir.h for details */
 
 bool pagedir_init(const char* pageDirectory) 
-{
-  sprintf(combinedName, "./%c/.crawler", pageDirectory);
+{ 
+  char combinedName[100];
+  sprintf(combinedName, "./%s/.crawler", pageDirectory);
   FILE* dotCrawler;
   dotCrawler = fopen(combinedName, "w");
+  if (dotCrawler == NULL) {
+    return false;
+  }
+
   fclose(dotCrawler);
+  return true;
 
 }
 
@@ -21,7 +33,10 @@ bool pagedir_init(const char* pageDirectory)
 
 void pagedir_save(const webpage_t* page, const char* pageDirectory, const int docID)
 {
-  sprintf(combinedURL, "./%c/%d", pageDirectory, docID);
+  char combinedURL[100];
+  sprintf(combinedURL, "./%s/%d", pageDirectory, docID);
+  //mem_assert_const to check page and pageDirectory
+  //mem_assert to check webpage_getURL
   FILE *file;
   file = fopen(combinedURL, "w");
   if (file == NULL) {
@@ -29,10 +44,11 @@ void pagedir_save(const webpage_t* page, const char* pageDirectory, const int do
     exit(1);
   }
 
-  fprintf(file, "%s\n", webpage_getURL(page));
+  fprintf(file, "%s\n", webpage_getURL(page)); //assert this stuff
   fprintf(file, "%d\n", webpage_getDepth(page));
-  fprintf(file, page->html);
+  fprintf(file, "%s\n",webpage_getHTML(page));
 
   fclose(file);
+  //free(combinedURL);
 
 }
