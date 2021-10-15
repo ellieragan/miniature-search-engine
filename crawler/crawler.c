@@ -90,16 +90,16 @@ static void crawl(char* seedURL, char* pageDirectory, const int maxDepth)
 
 static void pageScan(webpage_t* page, bag_t* pagesToCrawl, hashtable_t* pagesSeen)
 {
-  int pos = 0;
+  int* pos = 0;
   char* nextURL;
   while ((nextURL = webpage_getNextURL(page, pos)) != NULL) {
     char* normalized;
     if ((normalized = normalizeURL(nextURL)) != NULL) {
       if (isInternalURL(nextURL)) {
         if ((hashtable_insert(pagesSeen, nextURL, "") != false)) {
-          int currDepth = webpage_getDepth(nextURL);
+          int currDepth = webpage_getDepth(page);
           webpage_t* webpage = webpage_new(nextURL, currDepth, NULL);
-          bag_insert(*pagesToCrawl, webpage);
+          bag_insert(pagesToCrawl, webpage);
         }
       }
     }
