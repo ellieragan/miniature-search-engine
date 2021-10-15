@@ -33,13 +33,15 @@ bool pagedir_init(const char* pageDirectory)
 
 void pagedir_save(const webpage_t* page, const char* pageDirectory, const int docID)
 {
-  char combinedURL[100];
+  char* combinedURL = malloc(100);
   sprintf(combinedURL, "./%s/%d", pageDirectory, docID);
   //mem_assert_const to check page and pageDirectory
   //mem_assert to check webpage_getURL
+  if (combinedURL != NULL){
   FILE *file;
   file = fopen(combinedURL, "w");
-  if (file == NULL) {
+  free(combinedURL);
+  if (file == NULL || page == NULL) {
     fprintf(stderr, "something went wrong with the output file pathname");
     exit(1);
   }
@@ -50,5 +52,7 @@ void pagedir_save(const webpage_t* page, const char* pageDirectory, const int do
 
   fclose(file);
   //free(combinedURL);
+  //
+  }
 
 }

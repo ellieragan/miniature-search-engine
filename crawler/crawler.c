@@ -11,6 +11,7 @@
 #include "pagedir.h"
 #include "bag.h"
 #include "hashtable.h"
+#include <string.h>
 
 
 /* global variables */
@@ -74,38 +75,58 @@ static void crawl(char* seedURL, char* pageDirectory, const int maxDepth)
   webpage_t* extracted;
   while ((extracted = bag_extract(bag)) != NULL) {
     if (webpage_fetch(extracted)) {
+      printf("%d Fetched: %s\n", webpage_getDepth(extracted), webpage_getURL(extracted));
       pagedir_save(extracted, pageDirectory, ID);
       if (webpage_getDepth(extracted) < maxDepth) {
         pageScan(extracted, bag, hashtable);
       }
     }
+    printf("ID is %d\n", ID);
+    printf("url is %s\n", webpage_getURL(extracted));
     webpage_delete(extracted);
     ID++;
   }
   hashtable_delete(hashtable, NULL);
-  bag_delete(bag, webpage_delete);
+  bag_delete(bag, NULL);
 
 //don;t forget about mem_assert and mem_malloc_assert
 }
 
 static void pageScan(webpage_t* page, bag_t* pagesToCrawl, hashtable_t* pagesSeen)
 {
-  int* pos = 0;
+  int pos = 0;
   char* nextURL;
-  while ((nextURL = webpage_getNextURL(page, pos)) != NULL) {
-    char* normalized;
-    if ((normalized = normalizeURL(nextURL)) != NULL) {
-      if (isInternalURL(nextURL)) {
-        if ((hashtable_insert(pagesSeen, nextURL, "") != false)) {
-          int currDepth = webpage_getDepth(page);
-          webpage_t* webpage = webpage_new(nextURL, currDepth, NULL);
-          bag_insert(pagesToCrawl, webpage);
+  char* normalized;
+  printf("%d Scaenning: %s\n", webpage_getDepth(page), webpage_getURL(page));
+
+  while ((nextURL = webpage_getNextURL(page, &pos)) != NULL) {
+    printf("%d Found: %s\n", webpage_getDepth(page), nextURL);
+    normalized = normalizeURL(nextURL);
+    free(nextURL);
+
+      if (isInternalURL(normalized)) {
+        if (hashtable_find(pagesSeen, normalized) == NULL){
+          char* newURL = malloc(strlen(normalized) + 1);
+          strcpy(newURL, normalized);
+          printf("URL is %s\n", newURL);
+
+          if ((hashtable_insert(pagesSeen, newURL, ""))) {
+            int currDepth = webpage_getDepth(page);
+            webpage_t* webpage = webpage_new(newURL, currDepth + 1, NULL);
+              if(webpage != NULL){
+                bag_insert(pagesToCrawl, webpage);
+                printf("%d Added: %s\n", webpage_getDepth(page), newURL);
+              }
+        
+          }
         }
       }
+
+      free(normalized);
     }
-    free(nextURL);
+
   }
-}
+
 
 
 
