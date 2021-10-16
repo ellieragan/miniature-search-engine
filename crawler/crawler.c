@@ -34,24 +34,29 @@ int main(int argc, char* argv[]) {
 
 static void parseArgs(const int argc, char* argv[], char** seedURL, char** pageDirectory, int* maxDepth)
 {
+  
   if (argc < 4) {
+    fprintf(stderr, "%d", argc);
     fprintf(stderr, "not enough arguments");
     exit(1);
   }
   for (int i=0; i<argc; i ++) {
     if (argv[i] == NULL) {
-      fprintf(stderr, "%s is null", argv[i]);
+      fprintf(stderr, "%s is null\n", argv[i]);
       exit(2);
     }
   }
+  
   char* fixedURL = normalizeURL(*seedURL);
+  
   if (isInternalURL(fixedURL) != true) {
-    fprintf(stderr, "%s is not an internal URL", fixedURL);
+    fprintf(stderr, "%s is not an internal URL\n", fixedURL);
     exit(3);
   }
+  //free(fixedURL); //get rid of????
 
   if (pagedir_init(*pageDirectory) == false) {
-    fprintf(stderr, "error with page directory");
+    fprintf(stderr, "error with page directory\n");
     exit(4);
   }
 
@@ -59,7 +64,9 @@ static void parseArgs(const int argc, char* argv[], char** seedURL, char** pageD
 
   if (*maxDepth < min || *maxDepth > max) {
     fprintf(stderr, "maxDepth must be in the range [0, 10]");
+    exit(5);
 }
+
 }
 
 static void crawl(char* seedURL, char* pageDirectory, const int maxDepth) 
@@ -76,18 +83,20 @@ static void crawl(char* seedURL, char* pageDirectory, const int maxDepth)
   while ((extracted = bag_extract(bag)) != NULL) {
     if (webpage_fetch(extracted)) {
       printf("%d Fetched: %s\n", webpage_getDepth(extracted), webpage_getURL(extracted));
-      pagedir_save(extracted, pageDirectory, ID);
+      pagedir_save(extracted, pageDirectory, ++ID);
       if (webpage_getDepth(extracted) < maxDepth) {
         pageScan(extracted, bag, hashtable);
       }
     }
     printf("ID is %d\n", ID);
     printf("url is %s\n", webpage_getURL(extracted));
+    
+
     webpage_delete(extracted);
-    ID++;
+
   }
   hashtable_delete(hashtable, NULL);
-  bag_delete(bag, NULL);
+  bag_delete(bag, webpage_delete);
 
 //don;t forget about mem_assert and mem_malloc_assert
 }
@@ -97,37 +106,41 @@ static void pageScan(webpage_t* page, bag_t* pagesToCrawl, hashtable_t* pagesSee
   int pos = 0;
   char* nextURL;
   char* normalized;
-  printf("%d Scaenning: %s\n", webpage_getDepth(page), webpage_getURL(page));
+  printf("%d Scanning: %s\n", webpage_getDepth(page), webpage_getURL(page));
 
   while ((nextURL = webpage_getNextURL(page, &pos)) != NULL) {
     printf("%d Found: %s\n", webpage_getDepth(page), nextURL);
     normalized = normalizeURL(nextURL);
-    free(nextURL);
-
+    //free(nextURL);
+    if (normalized != NULL) {
       if (isInternalURL(normalized)) {
-        if (hashtable_find(pagesSeen, normalized) == NULL){
-          char* newURL = malloc(strlen(normalized) + 1);
-          strcpy(newURL, normalized);
-          printf("URL is %s\n", newURL);
+        //if (hashtable_insert(pagesSeen, normalized) == NULL){
+          //char* newURL = malloc(strlen(normalized) + 1);
+          //strcpy(newURL, normalized);
+          //printf("URL is %s\n", newURL);
 
-          if ((hashtable_insert(pagesSeen, newURL, ""))) {
+          if ((hashtable_insert(pagesSeen, normalized, ""))) {
             int currDepth = webpage_getDepth(page);
-            webpage_t* webpage = webpage_new(newURL, currDepth + 1, NULL);
-              if(webpage != NULL){
-                bag_insert(pagesToCrawl, webpage);
-                printf("%d Added: %s\n", webpage_getDepth(page), newURL);
-              }
+            webpage_t* webpage = webpage_new(normalized, currDepth + 1, NULL); //curDepth + 1
+              //if(webpage != NULL){
+              bag_insert(pagesToCrawl, webpage);
+              printf("%d Added: %s\n", webpage_getDepth(page), normalized);
+              //}
         
           }
-        }
+          else {
+            free(normalized);
+          }
       }
-
+      else {
+        free(normalized);
+      }
+    }
+    else {
       free(normalized);
     }
-
+    free(nextURL);
   }
-
-
-
+}
 
 
