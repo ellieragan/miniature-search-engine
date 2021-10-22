@@ -30,5 +30,16 @@ bool pagedir_init(const char* pageDirectory);
  * We return:
  * nothing
  */
-
 void pagedir_save(const webpage_t* page, const char* pageDirectory, const int docID);
+
+
+/******** pagedir_load ********/
+/* loads a webpage
+ *
+ * Caller provides:
+ *  char* pageDirectory, int docID
+ *
+ * We return:
+ *  pointer to a webpage
+ */
+webpage_t* pagedir_load(char* pageDirectory, int docID);

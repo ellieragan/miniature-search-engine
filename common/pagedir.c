@@ -8,6 +8,9 @@
 #include <stdlib.h>
 #include "../libcs50/webpage.h"
 #include "pagedir.h"
+#include "../libcs50/file.h"
+#include <string.h>
+#include "../libcs50/mem.h"
 
 
 /******** pagedir_init ********/
@@ -60,3 +63,36 @@ void pagedir_save(const webpage_t* page, const char* pageDirectory, const int do
 
   }
 }
+
+/******** pagedir_load ********/
+/* see pagedir.h for details */
+
+webpage_t* pagedir_load(char* pageDirectory, int docID)
+{
+  char* combinedFilepath = mem_malloc(strlen(pageDirectory) + 12);
+  sprintf(combinedFilepath, "%s/.crawler", pageDirectory);
+  FILE* file = fopen(combinedFilepath, "r");
+  free(combinedFilepath);
+  if (file == NULL) {
+    return NULL;
+  }
+  fclose(file);
+  char* pageLabeledWithNumber = mem_malloc(strlen(pageDirectory) + 9);
+  sprintf(pageLabeledWithNumber, "%s/%d", pageDirectory, docID);
+  FILE* file2 = fopen(pageLabeledWithNumber, "r");
+  free(pageLabeledWithNumber);
+  if (file2 == NULL) {
+    return NULL;
+  }
+  
+  char* URL = file_readLine(file2);
+  char* depthChar = file_readLine(file2);
+  char* HTML = file_readLine(file2);
+  int depth = atoi(depthChar);
+  webpage_t* page = webpage_new(URL, depth, HTML);
+  fclose(file2);
+  
+
+  return page;
+}
+  

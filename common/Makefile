@@ -5,14 +5,16 @@
 L = ../libcs50
 CC = gcc
 CFLAGS = -Wall -pedantic -std=c11 -ggdb $(FLAGS)
-OBJS = pagedir.o
+OBJS = pagedir.o index.o word.o
 LIB = common.a
 MAKE = make
 
 $(LIB): $(OBJS)
 	ar cr $(LIB) $(OBJS) 
 
-pagedir.o: pagedir.h $L/file.h
+pagedir.o: pagedir.h $L/file.h $L/webpage.h
+index.o: index.h $L/hashtable.h
+word.o: word.h
 
 clean:
 	rm -f core
