@@ -1,0 +1,12 @@
+# testing for lab 5
+# ellie boyd
+# cs50
+# 10-17-21
+
+#test 1--missing parameter
+./indexer ../data/letters
+not enough arguments
+echo $?
+1
+
+#test2--
