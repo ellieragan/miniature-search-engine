@@ -91,8 +91,8 @@ static void crawl(char* seedURL, char* pageDirectory, const int maxDepth)
   while ((extracted = bag_extract(bag)) != NULL) {
     
     if (webpage_fetch(extracted)) {
+      pagedir_save(extracted, pageDirectory, ++ID);
       printf("%d fetched %s\n", webpage_getDepth(extracted), webpage_getURL(extracted));
-      pagedir_save(extracted, pageDirectory, ++ID); 
       if (webpage_getDepth(extracted) < maxDepth) {
         pageScan(extracted, bag, hashtable);
       }
