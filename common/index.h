@@ -12,9 +12,12 @@
 
 #include <stdio.h>
 #include <stdbool.h>
+#include <string.h>
+#include "../libcs50/hashtable.h"
 
 /******** global types ********/
 typedef struct index index_t;
+//typedef hashtable_t index_t;
 
 /******** index_new ********/
 /* creates a new, empty index
@@ -54,7 +57,15 @@ void index_delete(index_t* index);
 
 
 /******** index_save ********/
-bool index_save(index_t* index, const char* filename);
+/* saves an index to a file
+ *
+ * Caller provides:
+ *  index object to save, pointer to file into which the index will be saved
+ *
+ * We return:
+ *  false if there is an error dealing with index or file, true otherwise
+ */
+bool index_save(index_t* index, FILE* file);
 
 
 

@@ -4,7 +4,7 @@
 
 L = ../libcs50
 CC = gcc
-CFLAGS = -Wall -pedantic -std=c11 -ggdb $(FLAGS)
+CFLAGS = -Wall -pedantic -std=c11 -ggdb $(FLAGS) -I$L
 OBJS = pagedir.o index.o word.o
 LIB = common.a
 MAKE = make

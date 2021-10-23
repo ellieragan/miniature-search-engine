@@ -22,6 +22,7 @@ test:
 
 valgrind: indexer
 	valgrind -v --leak-check=full --show-leak-kinds=all ./indexer ../data/letters ../data/fromIndexer
+
 clean:
 	rm -f indexer
 	rm -f *~ *.o

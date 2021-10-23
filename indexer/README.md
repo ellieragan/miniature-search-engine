@@ -30,4 +30,6 @@ none not specified in requirements & design
 * `testing.sh` - list of test commands called by Makefile
 * `testing.out` - output from testing.sh
 * `indextest.c` - tests for indexer.c
+* `IMPLEMENTATION.md` - implementation of indexer
+
 

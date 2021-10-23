@@ -12,6 +12,9 @@
 #include "pagedir.h"
 #include "index.h"
 #include "word.h"
+#include "counters.h"
+#include "mem.h"
+#include "hashtable.h"
 
 
 /* global variables */
@@ -37,8 +40,18 @@ int main(const int argc, char* argv[])
   //call indexBuild
   index_t* index = indexBuild(pageDirectory);
 
+  //open file
+  if (indexFilename ==  NULL) {
+    fprintf(stderr, "indexFilename does not exist");
+    exit(1);
+  }
+  FILE* file = fopen(indexFilename, "w");
+
   //write index into a file
-  index_save(index, indexFilename);
+  if (file != NULL) {
+  index_save(index, file);
+  fclose(file);
+  }
 
   //delete index
   index_delete(index);
@@ -50,13 +63,14 @@ int main(const int argc, char* argv[])
  */
 index_t* indexBuild(char* pageDirectory) 
 {
-  index_t* index = index_new(slots);
+  index_t* index = index_new(slots); //new index
   
   webpage_t* page = NULL;
   int i=0;
-  while ((page = pagedir_load(pageDirectory, i)) != NULL) {
-    indexPage(page, i, index);
-    webpage_delete(page);
+
+  while ((page = pagedir_load(pageDirectory, i)) != NULL) { //new webpage
+    indexPage(page, i, index); 
+    webpage_delete(page); 
     i++;
   }
   return index;
@@ -75,10 +89,10 @@ void indexPage(webpage_t* page, const int docID, index_t* index)
   }
   while ((word = webpage_getNextWord(page, &pos)) != NULL) {
     if (strlen(word) >= 3) {
-      word = normalizeWord(word);
-      index_insert(index, word, docID);
+      word = normalizeWord(word); //make lowercase
+      index_insert(index, word, docID); //add to index
     }
-    free(word);
-  } //free(word);
+  } 
+  free(word);
 }
 
