@@ -13,7 +13,8 @@ $(LIB): $(OBJS)
 	ar cr $(LIB) $(OBJS) 
 
 pagedir.o: pagedir.h $L/file.h $L/webpage.h
-index.o: index.h $L/hashtable.h
+index.o: index.h $L/hashtable.h $L/counters.h $L/webpage.h
+index.o: $L/file.h $L/mem.h pagedir.h word.h
 word.o: word.h
 
 clean:

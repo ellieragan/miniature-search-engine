@@ -51,8 +51,8 @@ webpage_t* pagedir_load(char* pageDirectory, int docID);
 
 ## Error handling
 
-All command line parameters are checked, as are parameters called by functions and things such as opened files and allocated memory
+Command line parameters are checked, as are parameters called by functions and things such as opened files and allocated memory
 
 ## Testing plan
 
-testing.sh tests things like command line errors, incorrect input values for functions, etc. indextest is intended to test the functionality of index itself
+testing.sh tests things like command line errors, incorrect input values for functions, etc. Indextest is intended to test the functionality of index itself by building an index object from an index file and then rewriting the file from the index object.

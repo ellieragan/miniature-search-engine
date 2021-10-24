@@ -67,32 +67,69 @@ void pagedir_save(const webpage_t* page, const char* pageDirectory, const int do
 /******** pagedir_load ********/
 /* see pagedir.h for details */
 
-webpage_t* pagedir_load(char* pageDirectory, int docID)
+webpage_t* pagedir_load(char* pageDirectory, int docID) //char* pageDirectory
 {
+  //creates path to a potential .crawler file
   char* combinedFilepath = mem_malloc(strlen(pageDirectory) + 12);
   sprintf(combinedFilepath, "%s/.crawler", pageDirectory);
-  FILE* file = fopen(combinedFilepath, "r");
+  FILE* file1 = fopen(combinedFilepath, "r");
   free(combinedFilepath);
-  if (file == NULL) {
+
+  //if file does not exist, then the directory must not have been made by a crawler
+  if (file1 == NULL) {
     return NULL;
   }
-  fclose(file);
+
+  //otherwise, create path to each file made by crawler
+  fclose(file1);
+  
+
   char* pageLabeledWithNumber = mem_malloc(strlen(pageDirectory) + 9);
   sprintf(pageLabeledWithNumber, "%s/%d", pageDirectory, docID);
   FILE* file2 = fopen(pageLabeledWithNumber, "r");
-  free(pageLabeledWithNumber);
+
   if (file2 == NULL) {
+    fprintf(stderr, "cannot read file %s\n", pageLabeledWithNumber);
+    free(pageLabeledWithNumber);
     return NULL;
   }
+
+  free(pageLabeledWithNumber);
   
+  //read through file to get URL, depth, and HTML
   char* URL = file_readLine(file2);
   char* depthChar = file_readLine(file2);
-  char* HTML = file_readLine(file2);
+  char* HTML = file_readFile(file2);
   int depth = atoi(depthChar);
+
+  //create webpage; clean up
   webpage_t* page = webpage_new(URL, depth, HTML);
+
   fclose(file2);
-  
+  free(depthChar);
 
   return page;
 }
+
+// bool
+// pagedir_validate(char* pageDirectory) 
+// {
+//   //creates path to a potential .crawler file
+//   char* combinedFilepath = mem_malloc(strlen(pageDirectory) + 12);
+//   sprintf(combinedFilepath, "%s/.crawler", pageDirectory);
+//   FILE* file = fopen(combinedFilepath, "r");
+//   free(combinedFilepath);
+
+//   //if file does not exist, then the directory must not have been made by a crawler
+//   if (file == NULL) {
+//     fclose(file);
+//     return false;
+//   }
+
+//   fclose(file);
+//   return true;
+// }
+
+
+
   

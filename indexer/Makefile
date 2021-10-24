@@ -12,19 +12,23 @@ LIBS = $C/common.a $L/libcs50.a
 
 .PHONY: all clean
 
-all: indexer
+all: indexer indextest
 
 indexer: $(OBJS)
 	$(CC) $(CFLAGS) $^ $(LIBS) -o $@
 
+indextest: indextest.o
+	$(CC) $(CFLAGS) $^ $(LIBS) -o $@
+	
 test:
 	bash -v testing.sh >& testing.out
 
 valgrind: indexer
-	valgrind -v --leak-check=full --show-leak-kinds=all ./indexer ../data/letters ../data/fromIndexer
+	valgrind -v --leak-check=full --show-leak-kinds=all ./indexer ../data/letters indexFile
 
 clean:
 	rm -f indexer
+	rm -f indextest
 	rm -f *~ *.o
 	rm -rf *.dSYM
 	rm -f core

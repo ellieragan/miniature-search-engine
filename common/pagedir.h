@@ -43,3 +43,15 @@ void pagedir_save(const webpage_t* page, const char* pageDirectory, const int do
  *  pointer to a webpage
  */
 webpage_t* pagedir_load(char* pageDirectory, int docID);
+
+/******** pagedir_validate ********/
+/* checks to see if a directory was made by a crawler
+ * 
+ * Caller provides:
+ *  file pointer
+ *
+ * We return:
+ *  true if the directory contains a .crawler file (and was therefore made by a crawler) and false otherwise
+ */
+//bool pagedir_validate(char* pageDirectory);
+

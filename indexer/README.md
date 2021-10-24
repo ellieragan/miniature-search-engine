@@ -29,7 +29,14 @@ none not specified in requirements & design
 * `indexer.c` - the indexer module
 * `testing.sh` - list of test commands called by Makefile
 * `testing.out` - output from testing.sh
-* `indextest.c` - tests for indexer.c
+* `indextest.c` - test for indexer.c
 * `IMPLEMENTATION.md` - implementation of indexer
+* `.gitignore` - to hide unwanted files
+
+### known bugs:
+
+A couple of bugs I noticed are as follows:
+First, my code does not recognize when a file to be written into is not supposed to be written into and exits 0 anyway. Same thing for every other test, even though I put checking statements into my code to make sure these things were valid and returning non-0 if they weren't, they are clearly not doing what they're supposed to. 
+Second, my while loop that reads crawler-made files always goes one step too far and tries to read a number file one too big and then says that it can't read the file but it still exits 0. I don't know what the deal is. Please tell me how to fix these things so they don't ruin my entire search engine later on
 
 

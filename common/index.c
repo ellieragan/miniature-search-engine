@@ -11,9 +11,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include "index.h"
-#include "../libcs50/hashtable.h"
-#include "../libcs50/counters.h"
-#include "../libcs50/mem.h"
+#include "hashtable.h"
+#include "counters.h"
+#include "mem.h"
+#include "webpage.h"
+#include "file.h"
 
 //definition
 typedef struct index {
@@ -31,22 +33,21 @@ void delete(void* item)
   }
 }
 
-//recursive helper function called by iterateAgain
+/*  helper function called by iterateAgain */
 void helpsCounter(void* arg, const int key, const int count) 
 {
   if (arg == NULL) {
     fprintf(stderr, "null argument in helpsCounter");
     exit(1);
   }
-
-  printf("made it into helpsCounter\n");
-  fflush(stdout);
+  
+  //write to file
   FILE* fp = arg;
   fprintf(fp, "%d %d ", key, count);
 
 }
 
-//helper function called by index_save
+/* helper function called by index_save */
 void iterateAgain(void* arg, const char* key, void* item)
 {
   if (arg == NULL || key == NULL || item == NULL) {
@@ -54,14 +55,15 @@ void iterateAgain(void* arg, const char* key, void* item)
     exit(1);
   }
 
-  printf("made it into iterateAgain\n");
-  fflush(stdout);
+  //write to file
   FILE* fp = arg;
   fprintf(fp, "%s ", key);
 
+  //call helper function
   counters_t* counter = item;
   counters_iterate(counter, fp, helpsCounter);
     
+  //new line
   fprintf(fp, "\n");
 }
 
@@ -88,6 +90,8 @@ bool
 index_insert(index_t* index, const char* word, const int docID) 
 {
   counters_t* counter;
+
+  //if the word is present:
   if ((counter = hashtable_find(index->hashtable, word)) != NULL) {
     counters_add(counter, docID);
   }
@@ -105,7 +109,8 @@ void
 index_delete(index_t* index)
 {
   if (index != NULL) {
-  hashtable_delete(index->hashtable, delete); //->hashtable
+  hashtable_delete(index->hashtable, delete); 
+  free(index);
   
   }
 }
@@ -121,10 +126,43 @@ index_save(index_t* index, FILE *file)
     return false;
   }
   
-  //recursively enter hashtable
-  hashtable_iterate(index->hashtable, file, iterateAgain); //please see README.md for notes about this line of code because it seems to be ruining the entire rest of my program
+  //enter hashtable
+  hashtable_iterate(index->hashtable, file, iterateAgain);
   return true;
 
+}
+
+/******** index_load ********/
+/* see index.h for description */
+void
+index_load(index_t* index, FILE* file)
+{
+  int docID;
+  int count;
+  char* word;
+
+  while ((word = file_readWord(file)) != NULL) { //get word
+    while ((fscanf(file, "%d %d ", &docID, &count)) > 0) { //get docID and count
+      index_set(index, word, docID, count); //set values in index
+    }
+    free(word);
+  }
+}
+
+/******** index_set() ********/
+/* see index.h for description */
+bool index_set(index_t* index, const char* word, const int docID, const int count) 
+{
+  counters_t* counter;
+  if ((counter = hashtable_find(index->hashtable, word)) != NULL) {
+    counters_set(counter, docID, count);
+  }
+  else {
+      counter = counters_new();
+      counters_set(counter, docID, count);
+      hashtable_insert(index->hashtable, word, counter);
+  }
+  return true;
 }
 
 

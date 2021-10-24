@@ -3,10 +3,67 @@
 # cs50
 # 10-17-21
 
-#test 1--missing parameter
+#my test numbers are off from the sample I'm sorry
+
+#test1--one missing argument
 ./indexer ../data/letters
-not enough arguments
+indexer takes 2 arguments
 echo $?
 1
 
-#test2--
+#test2--no arguments
+./indexer
+indexer takes 2 arguments
+echo $?
+1
+
+#test3--more than two arguments
+./indexer ~/cs50-dev/shared/tse/output/crawler/pages-letters-depth-1 ../data/myindexer hello there
+indexer takes 2 arguments
+echo $?
+1
+
+#test3--index compare of letters1
+./indexer ../../shared/tse/output/crawler/pages-letters-depth-1 ../data/letters1
+cannot read file ../../shared/tse/output/crawler/pages-letters-depth-1/8
+../../shared/tse/indexcmp ../../shared/tse/output/indexer/index-letters-1 ../data/letters1
+
+#test4--letters2
+./indexer ../../shared/tse/output/crawler/pages-letters-depth-2 ../data/letters2
+cannot read file ../../shared/tse/output/crawler/pages-letters-depth-2/8
+../../shared/tse/indexcmp ../../shared/tse/output/indexer/index-letters-2 ../data/letters2
+
+#test5--index compare of letters3
+./indexer ../../shared/tse/output/crawler/pages-letters-depth-3 ../data/letters3
+cannot read file ../../shared/tse/output/crawler/pages-letters-depth-3/8
+../../shared/tse/indexcmp ../../shared/tse/output/indexer/index-letters-3 ../data/letters3
+
+#test6--index compare of letters10
+./indexer ../../shared/tse/output/crawler/pages-letters-depth-10 ../data/letters10
+cannot read file ../../shared/tse/output/crawler/pages-letters-depth-10/11
+../../shared/tse/indexcmp ../../shared/tse/output/indexer/index-letters-10 ../data/letters10
+
+#test7--index compare of toscrape1
+./indexer ../../shared/tse/output/crawler/pages-toscrape-depth-1 ../data/toscrape1
+cannot read file ../../shared/tse/output/crawler/pages-toscrape-depth-1/75
+../../shared/tse/indexcmp ../../shared/tse/output/indexer/index-toscrape-1 ../data/toscrape1
+
+#test8--index compare of toscrape2
+./indexer ../../shared/tse/output/crawler/pages-toscrape-depth-2 ../data/toscrape2
+cannot read file ../../shared/tse/output/crawler/pages-toscrape-depth-2/467
+../../shared/tse/indexcmp ../../shared/tse/output/indexer/index-toscrape-2 ../data/toscrape2
+
+#test 9 should be toscrape3 according to the rubric but there is no toscrape 3 provided in cs50-dev/shared/tse/output/crawler
+
+#test10--index compare of wiki1
+./indexer ../../shared/tse/output/crawler/pages-wikipedia-depth-1 ../data/wiki1
+cannot read file ../../shared/tse/output/crawler/pages-wikipedia-depth-1/8
+../../shared/tse/indexcmp ../../shared/tse/output/indexer/index-wikipedia-1 ../data/wiki1
+
+#test11--index compare of wiki2
+./indexer ../../shared/tse/output/crawler/pages-wikipedia-depth-2 ../data/wiki2
+cannot read file ../../shared/tse/output/crawler/pages-wikipedia-depth-2/1676
+../../shared/tse/indexcmp ../../shared/tse/output/indexer/index-wikipedia-2 ../data/wiki2
+
+#test12--index compare of wiki3
+./indexer ../../shared/tse/output/crawler/pages-wikipedia-depth-3 ../data/wiki3

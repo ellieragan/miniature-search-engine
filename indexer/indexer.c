@@ -28,8 +28,8 @@ int main(const int argc, char* argv[])
 {
 
   //check for correct number of arguments
-  if (argc < 3) {
-    fprintf(stderr, "not enough arguments\n");
+  if (argc != 3) {
+    fprintf(stderr, "indexer takes 2 arguments\n");
     exit(1);
   }
 
@@ -38,20 +38,26 @@ int main(const int argc, char* argv[])
   char* indexFilename = argv[2];
 
   //call indexBuild
-  index_t* index = indexBuild(pageDirectory);
+  index_t* index;
+  
+  index = indexBuild(pageDirectory);
 
   //open file
-  if (indexFilename ==  NULL) {
-    fprintf(stderr, "indexFilename does not exist");
+  if (indexFilename == NULL) {
+    fprintf(stderr, "indexFilename does not exist\n");
     exit(1);
   }
   FILE* file = fopen(indexFilename, "w");
 
   //write index into a file
-  if (file != NULL) {
+  if (file == NULL) {
+    fprintf(stderr, "invalid indexFilename\n");
+    fclose(file);
+    exit(1);
+  }
+  
   index_save(index, file);
   fclose(file);
-  }
 
   //delete index
   index_delete(index);
@@ -64,15 +70,36 @@ int main(const int argc, char* argv[])
 index_t* indexBuild(char* pageDirectory) 
 {
   index_t* index = index_new(slots); //new index
-  
   webpage_t* page = NULL;
-  int i=0;
+  int i=1;
+
+  // //check to see if directory was made by crawler
+  // if (pagedir_validate(pageDirectory) == false) {
+  //   fprintf(stderr, "invalid pageDirectory\n");
+  //   free(page);
+  //   exit(1);
+  //}
+
+  // char* pageLabeledWithNumber = mem_malloc(strlen(pageDirectory) + 9);
+  // sprintf(pageLabeledWithNumber, "%s/%d", pageDirectory, i);
+  // FILE* file;
+  // while ((file = fopen(pageLabeledWithNumber, "r")) != NULL) {
+  //   page = pagedir_load(file, i);
+  //   indexPage(page, i, index);
+  //   i++;
+  //   sprintf(pageLabeledWithNumber, "%s/%d", pageDirectory, i);
+  //   fclose(file);
+  // }
+
+  // free(pageLabeledWithNumber);
 
   while ((page = pagedir_load(pageDirectory, i)) != NULL) { //new webpage
     indexPage(page, i, index); 
     webpage_delete(page); 
     i++;
   }
+  free(page);
+
   return index;
 }
 
@@ -83,16 +110,13 @@ void indexPage(webpage_t* page, const int docID, index_t* index)
 {
   int pos = 0;
   char* word;
-  if (webpage_fetch(page) == false) {
-    fprintf(stderr, "error fetching html");
-    exit(6);
-  }
+
   while ((word = webpage_getNextWord(page, &pos)) != NULL) {
     if (strlen(word) >= 3) {
       word = normalizeWord(word); //make lowercase
       index_insert(index, word, docID); //add to index
     }
-  } 
-  free(word);
+    free(word);
+  }
 }
 

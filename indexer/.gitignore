@@ -36,3 +36,5 @@ indexer
 indexer.o
 pagedir.o
 pagedir
+indextest
+indextest.o

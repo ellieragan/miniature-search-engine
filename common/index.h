@@ -68,5 +68,29 @@ void index_delete(index_t* index);
 bool index_save(index_t* index, FILE* file);
 
 
+/******** index_load *******/
+/* loads info from a file into an index object
+ *
+ * Caller provides:
+ *  an index and a pointer to a file
+ *
+ * We return:
+ *  void
+ */
+void index_load(index_t* index, FILE* file);
+
+
+/******** index_set ********/
+/* sets the value of counters in an index
+ *
+ * Caller provides:
+ *  an index, a char* word, const int docID, and const in count
+ *
+ * We return:
+ *  void
+ */
+bool index_set(index_t* index, const char* word, const int docID, const int count);
+
+
 
 #endif

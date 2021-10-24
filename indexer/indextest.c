@@ -24,15 +24,23 @@ int main(const int argc, const char *argv[]) {
   }
 
   //assign arguments
-  char* oldIndexFilename = argv[1]; //file produced by indexer
-  char* newIndexFilename = argv[2]; //file into which index should be written
+  const char* oldIndexFilename = argv[1]; //file produced by indexer
+  const char* newIndexFilename = argv[2]; //file into which index should be written
 
   index_t* index = index_new(500); //new index
-  index_load(index, oldIndexFilename); //put into index
-  FILE* fp;
-  fp = fopen(newIndexFilename, "w"); //file pointer to write into
-  index_save(index, fp); //write into new file
+
+  FILE* oldfile;
+  oldfile = fopen(oldIndexFilename, "r"); //open file to read from
+  index_load(index, oldfile); //put into index
+  fclose(oldfile);
+
+  FILE* newfile;
+  newfile = fopen(newIndexFilename, "w"); //open file to write into
+  index_save(index, newfile); //write into new file
+  fclose(newfile); 
+
   index_delete(index);
+
 }
 
 

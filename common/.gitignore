@@ -36,3 +36,7 @@ crawler
 crawler.o
 pagedir.o
 pagedir
+indexer
+indexer.o
+indextest
+indextest.o
