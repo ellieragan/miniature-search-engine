@@ -91,6 +91,17 @@ void index_load(index_t* index, FILE* file);
  */
 bool index_set(index_t* index, const char* word, const int docID, const int count);
 
+/******** index_get ********/
+/* gets the item at a key 
+*
+* Caller provides:
+* index_t* index, char pointer key
+* 
+* We return:
+* item associated with given key
+*/
+void* index_get(index_t* index, char* key);
+
 
 
 #endif

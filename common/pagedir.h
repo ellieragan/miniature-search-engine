@@ -53,5 +53,5 @@ webpage_t* pagedir_load(char* pageDirectory, int docID);
  * We return:
  *  true if the directory contains a .crawler file (and was therefore made by a crawler) and false otherwise
  */
-//bool pagedir_validate(char* pageDirectory);
+bool pagedir_validate(char* pageDirectory);
 

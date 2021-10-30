@@ -111,24 +111,24 @@ webpage_t* pagedir_load(char* pageDirectory, int docID) //char* pageDirectory
   return page;
 }
 
-// bool
-// pagedir_validate(char* pageDirectory) 
-// {
-//   //creates path to a potential .crawler file
-//   char* combinedFilepath = mem_malloc(strlen(pageDirectory) + 12);
-//   sprintf(combinedFilepath, "%s/.crawler", pageDirectory);
-//   FILE* file = fopen(combinedFilepath, "r");
-//   free(combinedFilepath);
+bool pagedir_validate(char* pageDirectory) 
+{
+  //creates path to a potential .crawler file
+  char* combinedFilepath = mem_malloc(strlen(pageDirectory) + 12);
+  sprintf(combinedFilepath, "%s/.crawler", pageDirectory);
+  FILE* file = fopen(combinedFilepath, "r");
+  free(combinedFilepath);
+  
 
-//   //if file does not exist, then the directory must not have been made by a crawler
-//   if (file == NULL) {
-//     fclose(file);
-//     return false;
-//   }
+  //if file does not exist, then the directory must not have been made by a crawler
+  if (file == NULL) {
+    //fclose(file);
+    return false;
+  }
 
-//   fclose(file);
-//   return true;
-// }
+  fclose(file);
+  return true;
+}
 
 
 

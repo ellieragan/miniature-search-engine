@@ -165,5 +165,12 @@ bool index_set(index_t* index, const char* word, const int docID, const int coun
   return true;
 }
 
+/******** index_get() ********/
+/* see index.h for description */
+void* index_get(index_t* index, char* key)
+{
+	hashtable_t* indexHashtable = index->hashtable;
+    return hashtable_find(indexHashtable, key);
+}
 
 
