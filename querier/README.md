@@ -47,12 +47,6 @@ none not specified in requirements & design
 * `DESIGN.md` - design of querier
 * `.gitignore` - to hide unwanted files
 
-### known bugs:
- 
- My tests look like they have failing exit codes because i could not figure out how to use expect send. and piping did not work for whatever strange reason
-
-
-
 
 
 
