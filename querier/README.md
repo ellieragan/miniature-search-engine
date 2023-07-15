@@ -2,10 +2,6 @@
 # Ellie Boyd
 # Oct 20 2021
 
-### important note -- 
-
-I added an index_get function to my index since submitting indexer last week! and I'm terrible with technology so I'm not sure how the whole grading /github thing works but I will re-push my indexer folder just to make sure you have access to my updated index for this lab
-
 ### Usage
 
 To build `querier`, run `make`.
